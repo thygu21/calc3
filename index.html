@@ -1,1 +1,393 @@
-sdfds
+<!DOCTYPE html>
+<html>
+<head>
+    <title>공학용 계산기 ver 1.0</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="package/css/bootstrap.css"></link>
+    <link rel="stylesheet" type="text/css" href="package/main.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="package/js/bootstrap.js"></script>
+    <script src='package/math.js' type='text/javascript'></script>
+    <script type='text/javascript'>
+        var selectTxt = ''; // 복사값 저장을 위한 전역변수
+
+        $(document).ready(function()
+        {
+            $('.proc').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default vectorSub procession' value='DF'>default</button><button type='button' class='btn key btn-default vectorSub procession' value='DE'>det</button><button type='button' class='btn key btn-default vectorSub procession' value='IN'>inv</button>", html: true, placement: "right"});
+            $('.vector').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default vectorSub procession' value='DO'>dot</button><button type='button' class='btn key btn-default vectorSub procession' value='CR'>cross</button>", html: true, placement: "right"});
+            $('.func').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default funcSub'>f</button><button type='button' class='btn key btn-default funcSub'>g</button>", html: true, placement: "left"});
+            $('.variable').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default variableSub pc'>x</button><button type='button' class='btn key btn-default variableSub pc'>y</button><button type='button' class='btn key btn-default variableSub pc'>z</button>", html: true, placement: "top"});
+            let parser = math.parser();
+
+            let displayValue = '';
+            let displayProcess = '';
+
+            let mxrows = 1;
+            let mxcols = 1;
+            let rows = 1;
+            let cols = 1;
+
+            $('#result').text(displayValue);
+
+            $(".copy").click(function(e) // copy 기능
+            {
+                if(selectTxt == '')
+                    selectTxt = displayValue;
+                e.stopImmediatePropagation();
+            });
+
+            $(".paste").click(function(e) // paste 기능
+            {
+                displayValue += selectTxt.toString();
+                $('#result').text(displayValue);
+                e.stopImmediatePropagation();
+            });
+
+            $("select").dblclick(function(e)
+            {
+                displayValue = $("select option:selected").text();
+                $('#result').text(displayValue);
+                e.stopImmediatePropagation();
+            });
+
+            $(document).on("click",".procession",function(k) //토글 창 on,off , 생성된 html 팝업요소의 접근을 위한 on()사용
+            {
+                // slice(-3,-1)은 마지막에서 세번째, 두번째 문자로 cross와 dot의 중복 클릭을 했을 때 입력을 막기 위함
+                if(($(this).val() == 'DO' || $(this).val() == 'CR' || $(this).val() == 'DE' || $(this).val() == 'IN' || $(this).val() == 'DF')
+                && (displayValue.slice(-3,-1) != "do" || displayValue.slice(-3,-1) != "os" || displayValue.slice(-3,-1) != "de" 
+                || displayValue.slice(-3,-1) != "in" || displayValue.slice(-3,-1) != "ul"))
+                {
+                    displayValue += $(this).text();
+                }
+
+                if($("#plustab").is(':visible'))
+                {
+                    $('#plustab').hide();
+                }
+                else
+                {
+                    $('#plustab').show();
+                    $(".row-"+rows+".col-"+cols).focus(); // 정해진 칸에 포커스
+                }
+
+                k.stopImmediatePropagation();
+            })
+
+            $(document).on("click",".key",function(e) //키 입력, 행렬 탭이 닫혀 있을 때 동작
+            {
+                if($("#plustab").is(':visible')) // plustab이 보일 때
+                {
+                    if($(this).hasClass("pc")) // 숫자+변수+기본함수 버튼을 눌렀을 때
+                    {
+                        displayProcess += $(this).text()
+                        $(".row-"+rows+".col-"+cols).val(displayProcess);
+                    }
+
+                    if($(this).hasClass("next")) // 칸 이동
+                    {
+                        displayProcess = '';
+
+                        if(cols < mxcols) //  행 이동
+                            cols += 1;
+                        else if(rows < mxrows) //같은 행의 숫자가 다 찼으면 한 열 아래로
+                        {
+                            rows += 1;
+                            cols = 1;
+                        }
+                        else // 모든 칸이 다 찼으면 1열 1칸으로 이동
+                        {
+                            cols = 1
+                            rows = 1
+                        }
+                    }
+
+                    if($(this).hasClass("arrow")) // 행렬 칸 내에서의 지우기
+                    {
+                        displayProcess = remove(displayProcess);
+                        $(".row-"+rows+".col-"+cols).val(displayProcess);
+                    }
+
+                    if($(this).hasClass("modify")) // 행렬 크기 조절버튼 혹은 대입 버튼을 눌렀을 때
+                    {
+                        if($(this).val() == 'DN' && mxrows < 5) // 아래로 늘리기
+                        {
+                            mxrows += 1;
+                            $("#myTable").append("<tr id='row-" + mxrows + "'></tr>");
+                            $("#row-"+mxrows).append("<td>[</td>");
+                            $("#row-"+mxrows).append("<td><input type='text' class='form-control key vectorInsert row-" + mxrows + " col-1' value='0'></td>");
+                            for(i = 2; i <= mxcols; i++)
+                            {
+                                $("#row-"+mxrows).append("<td>,</td>");
+                                $("#row-"+mxrows).append("<td><input type='text' class='form-control key vectorInsert row-" + mxrows + " col-" + i + "' value='0'></td>");
+                            }
+                            $("#row-"+mxrows).append("<td class='lastcol'>]</td>");
+
+                        }
+                        else if($(this).val() == 'RI' && mxcols < 5) // 오른쪽으로 늘리기
+                        {
+                            $(".lastcol").remove();
+                            mxcols += 1;
+                            for(i = 1; i <= mxrows; i++)
+                            {
+                                $("#row-"+i).append("<td>,</td>");
+                                $("#row-"+i).append("<td><input type='text' class='form-control key vectorInsert row-" + i + " col-" + mxcols + "' value='0'></td>");
+                                $("#row-"+i).append("<td class='lastcol'>]</td>");
+                            }
+                        }
+                        else if($(this).val() == "LE" && mxcols > 1)
+                        {
+                            for(i = 1; i <= mxrows; i++)
+                            {
+                                $("#row-"+i).children('td').slice(-3,-1).remove();
+                            }
+                            mxcols -= 1;
+                        }
+                        else if($(this).val() == "UP" && mxrows > 1)
+                        {
+                            $("#row-"+mxrows).remove();
+                            mxrows -= 1;
+                        }
+                        else if($(this).val() == "EN") //완성된 행렬 출력하기
+                        {
+
+                            let state = '';
+                            console.log(displayValue);
+                            if(displayValue.slice(-3,-1) == "de" || displayValue.slice(-3,-1) == "in") // 행렬을 입력할 때 괄호쌍 설정을 위함
+                                state = "procession";
+                            if(displayValue.slice(-3,-1) == "ul") // default라는 텍스트를 제거해줌
+                            {
+                                state = "default";
+                                displayValue = displayValue.slice(0,-7);
+                            }
+
+                            if(state != "default") // 기본행렬일 경우 '(' 삭제
+                                displayValue += "(";
+                            if(state == "procession" || state == "default") // 행렬에 관한 함수일 경우 '[' 추가
+                                displayValue += "[";
+                            for(i = 1; i <= mxrows; i++)
+                            {
+                                displayValue += "[";
+                                displayValue += $(".row-"+i+".col-1").val();
+                                for(j = 2; j <= mxcols; j++)
+                                {
+                                    displayValue += ",";
+                                    displayValue += $(".row-"+i+".col-"+j).val();
+                                }
+                                displayValue += "]";
+                                displayValue += ",";
+                            }
+                            displayValue = displayValue.slice(0,-1); //하나 지우기(,)
+
+                            if(state == "procession" || state == "default") // 행렬에 관한 함수일 경우 ']' 추가
+                                displayValue += "]";
+                            if(state != "default")
+                                displayValue += ")";
+
+
+                            $('#result').text(displayValue);
+                            $('#plustab').hide();
+                        }
+                    }
+                }
+
+                else if($("#plustab").is(":hidden")) // plustab이 보이지 않을 때
+                {
+
+                    if($(this).val() == 'EV') // 계산하기 버튼 누를 때
+                    {
+                        try
+                        {
+                            $('.history').prepend("<option>"+ displayValue +"</option>"); // history 추가
+                            displayValue = parser.eval(displayValue).toString();
+                            let tokens = displayValue.split(' ');
+                            if(tokens[0] == 'function')
+                            {
+                                displayValue = tokens[0];
+                            }
+                            $('#result').text(displayValue);
+
+                            displayValue = '';
+                        }
+                        catch (e)
+                        {
+                            displayValue = '';
+                            if(displayValue != 'function')
+                            {
+                                $('#result').text(e);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if($(this).val() == 'CL') // 지우기 버튼을 누를 때
+                        {
+                            displayValue = '';
+                            $('#result').text(displayValue);
+                        }
+                        else if($(this).val() == 'RM') // 백스페이스 버튼을 누를 때
+                        {
+                            displayValue = remove(displayValue);
+                            $('#result').text(displayValue);
+                        }
+                        else if($(this).val() != "PR" && $(this).val() != "VE") // 벡터 와 행렬 한글을 출력하지 않게 함
+                        {
+                            displayValue += $(this).text();
+                            $('#result').text(displayValue);
+                        }
+
+                    }
+                    e.preventDefault();
+                }
+                e.stopImmediatePropagation();
+            })
+        })
+        function drag()
+        {
+            if (window.getSelection)
+                selectTxt = window.getSelection();
+        }
+        function remove(display)
+        {
+            let context = display.slice(-3,length.display);
+            // 여러 함수에 대한 한번에 지우기 처리
+            if(context == "sin" || context == "cos" || context == "tan" || context == "exp" || context == "log" 
+            || context == "qrt" || context == "dot" || context == "oss" || context == "inv" || context == "det")
+            {
+                if(context == "qrt")
+                {
+                    display = display.slice(0,-4);
+                }
+                else if(context == "oss")
+                {
+                    display = display.slice(0,-5);
+                }
+                else
+                    display = display.slice(0,-3);
+            }
+            else // 일반 숫자나 한자리의 연산에 대한 지우기 처리
+            {
+                display = display.slice(0,-1);
+            }
+
+            return display;
+        }
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <div id="calculator" class="col-xs-6">
+        <div class="row">
+            <div class="col-xs-10 label">
+                <textarea id="result" class="form-control" onMouseUp="drag()" rows="2" readonly></textarea>
+            </div>
+            <div class="col-xs-2 RightLayout">
+                <button type="button" class="btn key btn-danger erase" value="CL">
+                    <span class="glyphicon glyphicon-erase" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row historyLine">
+            <div class="col-xs-10">
+                <select multiple class="form-control history">
+                </select>
+            </div>
+            <div class="col-xs-2 RightLayout">
+                <button type="button" class="btn btn-success erase" data-toggle="modal" data-target="#qna">
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <button type="button" class="btn key btn-default pc">AC</button>
+                <button type="button" class="btn key btn-default pc">/</button>
+                <button type="button" class="btn key btn-default pc">*</button>
+                <button type="button" class="btn key btn-default pc">7</button>
+                <button type="button" class="btn key btn-default pc">8</button>
+                <button type="button" class="btn key btn-default pc">9</button>
+                <button type="button" class="btn key btn-default pc">4</button>
+                <button type="button" class="btn key btn-default pc">5</button>
+                <button type="button" class="btn key btn-default pc">6</button>
+                <button type="button" class="btn key btn-default pc">1</button>
+                <button type="button" class="btn key btn-default pc">2</button>
+                <button type="button" class="btn key btn-default pc">3</button>
+                <button type="button" class="btn key btn-default">0</button>
+            </div>
+            <div class="col-xs-4">
+                <button type="button" class="btn key btn-danger" value="RM">
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn key btn-default pc">-</button>
+                <button type="button" class="btn key btn-default pc">+</button>
+                <button type="button" class="btn key btn-success ev" value="EV">enter</button>
+            </div>
+        </div>
+    </div>
+    <div id="plustab" class="col-xs-4">
+        <div class="col-xs-12 RightLayout">
+            <div class="addPmeter">
+                <button type="button" class="btn key btn-default modify" value="UP">
+                        <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn key btn-default modify" value="DN">
+                        <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn key btn-default modify" value="LE">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn key btn-default modify" value="RI">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="btn key btn-success modify enter" value="EN">입력</button>
+                <button type="button" class="btn key btn-warning modify next">다음</button>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody id="myTable">
+                <tr id="row-1">
+                    <td>[</td>
+                    <td><input type="text" class="form-control key vectorInsert row-1 col-1" value="0"></td>
+                    <td class="lastcol">]</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" id="qna" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">도움말</h4>
+            </div>
+            <div class="modal-body">
+                기본적으로 산술연산은 숫자와 파란색의 연산자, 그리고 EV라는 계산하기 버튼을 눌렀을 때, 진행됩니다.<br>
+                비교 연산은 하늘색의 비교 연산자를 누르면 됩니다. 상수는 PI(π)와 e, i가 있습니다.
+                <hr>
+                <h4>함수, 변수</h4>
+                함수와 변수를 정의할 때는 팝업을 띄우고 정의하고 싶은 함수를 클릭한 다음 '=' 연산자를 통해 정의합니다.<br>
+                함수는 인자로 기본적으로 주어진 x, y, z 변수를 통해서 f(x) = x + 1과 같이 인자를 사용해야 합니다.<br>
+                기본적으로 주어진 파란색 삼각함수와, 지수, 로그, 제곱근 등 하늘색의 제곱근 함수를 사용할 수 있습니다.<br>
+                <hr>
+                <h4>행렬</h4>
+                행렬을 간편하게 계산하기 위해 추가 탭을 준비했습니다. <br>
+                행렬이나 벡터 버튼안에 팝업으로 나타나는 버튼을 누르면 행렬탭이 나타납니다. <br>
+                숫자,함수 모두 입력할 수 있고, 지우기도 됩니다. 화살표를 눌러 원하는 크기의 행렬을 사용할 수 있습니다.<br>
+                입력을 누르면 행렬이 입력되고 각 함수에 따라서 괄호 쌍이 자동으로 입력됩니다.
+                <hr>
+                <h4>복사 붙여넣기, 히스토리, 지우기</h4>
+                복사는 드래그를 했을 경우에는 선택된 부분을, 아무것도 선택하지 않았을 때는 전체 수식을 복사합니다.<br>
+                히스토리는 계산했었던 히스토리를 보여주며, 더블클릭할 경우 수식을 다시 사용할 수 있습니다.<br>
+                지우기 기능은 여러 문자로된 함수를 지울때 그 함수를 모두 지울 수 있도록 했습니다.
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

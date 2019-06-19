@@ -1,0 +1,175 @@
+#calculator
+{
+	background-color: #f5f5f5;
+    border: 13px solid #86bbdc;
+    height: auto;
+    padding: 14px;
+}
+#plustab
+{
+    background-color: #f5f5f5;
+    border: 5px solid #86bbdc;
+    min-height: 100px;
+    padding: 15px;
+    margin-top: 349px;
+    padding: 2px;
+    font-size: 10px;
+    display: none;
+}
+#plustab .btn-default
+{
+    width: 30px;
+    height: 25px;
+    font-size: 14px;
+    margin: 4px 0px;
+    border-color: transparent;
+    background-color: transparent;
+}
+#result
+{
+    font-size: 20px;
+}
+#myTable
+{
+    margin: 2px;
+}
+#myTable td
+{
+    padding: 3px 1px;
+    width: 10px;
+}
+.addPmeter
+{
+    padding: 0px;
+    float: left;
+}
+.arrow
+{
+    width: 75px;
+    height: 60px;
+    font-size: 27px;
+}
+.ev
+{
+    width: 75px;
+    height: 130px;
+    font-size: 27px;
+}
+.erase
+{
+    width: 65px;
+    height: 55px;
+}
+.bracket
+{
+    width: 36px;
+    height: 60px;
+    font-size: 27px;
+}
+.RightLayout
+{
+    padding: 0px;
+}
+.compare
+{
+    margin-right: 25px;
+}
+.label
+{
+    padding-Right: 0px;
+    padding-left: 15px;
+}
+.historyLine
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.history
+{
+    height: 65px;
+}
+.function
+{
+    width: 125px;
+	height: 60px;
+}
+.btn-popover
+{
+    color: #333;
+    background-color: #fcf8e3;
+    border-color: #f2dede;
+}
+.btn-const
+{
+    color: #333;
+    background-color: #fcf8e3;
+    border-color: #f2dede;
+    width: 50px;
+    height: 60px;
+    font-size: 30px;
+}
+.vectorRight
+{
+    margin-right: 20px;
+    width: 120px;
+    height: 60px;
+}
+.vectorLeft
+{
+    width: 100px;
+    height: 47px;
+}
+.funcSub
+{
+    width: 50px;
+    height: 52px;
+    font-size: 24px;
+    color: #333;
+    border-color: rgba(255, 255, 255, .15);
+    background-color: #d9edf7;
+}
+.variableSub
+{
+    width: 37px;
+    height: 45px;
+    font-size: 22px;
+    color: #333;
+    border-color: rgba(255, 255, 255, .15);
+    background-color: #d9edf7;
+}
+.vectorSub
+{
+    width: 64px;
+    height: 38px;
+    font-size: 17px;
+    color: #333;
+    border-color: rgba(255, 255, 255, .15);
+    background-color: #d9edf7;
+}
+.dot
+{
+    width: 35px;
+    height: 60px;
+    margin: auto;
+}
+.vectorInsert
+{
+    width: 45px;
+    height: 26px;
+    padding: 3px 4px;
+    font-size: 12px;
+}
+.enter
+{
+    float: right;
+    width: 60px;
+    height: 27px;
+    font-size: 18px;
+}
+.next
+{
+    float: left;
+    width: 60px;
+    height: 27px;
+    font-size: 18px;
+}
