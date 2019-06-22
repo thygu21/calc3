@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>공학용 계산기 ver 1.0</title>
+    <title>공학용 계산기 ver 2.0</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,16 +11,11 @@
     <script src="package/js/bootstrap.js"></script>
     <script src='package/math.js' type='text/javascript'></script>
     <script type='text/javascript'>
-        var selectTxt = ''; // 복사값 저장을 위한 전역변수
-
-        $(document).ready(function()
+        $(document).ready(function() 
         {
-            $('.proc').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default vectorSub procession' value='DF'>default</button><button type='button' class='btn key btn-default vectorSub procession' value='DE'>det</button><button type='button' class='btn key btn-default vectorSub procession' value='IN'>inv</button>", html: true, placement: "right"});
-            $('.vector').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default vectorSub procession' value='DO'>dot</button><button type='button' class='btn key btn-default vectorSub procession' value='CR'>cross</button>", html: true, placement: "right"});
-            $('.func').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default funcSub'>f</button><button type='button' class='btn key btn-default funcSub'>g</button>", html: true, placement: "left"});
-            $('.variable').popover({trigger:"focus", content: "<button type='button' class='btn key btn-default variableSub pc'>x</button><button type='button' class='btn key btn-default variableSub pc'>y</button><button type='button' class='btn key btn-default variableSub pc'>z</button>", html: true, placement: "top"});
             let parser = math.parser();
-
+            let ctrldown = false;
+            let copied = '';
             let displayValue = '';
             let displayProcess = '';
 
@@ -29,38 +24,87 @@
             let rows = 1;
             let cols = 1;
 
-            $('#result').text(displayValue);
+            $('#result').val(displayValue);
 
-            $(".copy").click(function(e) // copy 기능
+            $(document).keypress(function(e) //키보드 인식
             {
-                if(selectTxt == '')
-                    selectTxt = displayValue;
+                if($("#plustab").is(':hidden'))
+                {
+                    if(e.which == 13)
+                    {
+                        $('.ev').trigger("click");
+                    }
+                    else
+                    {
+                        displayValue += String.fromCharCode(e.which);
+                        $('#result').val(displayValue);
+                    }
+                    e.stopImmediatePropagation();
+                }
+            });
+
+            $(document).keydown(function(e) //backspace 인식
+            {
+                if($("#plustab").is(':hidden'))
+                {
+                    if(e.which == 8)
+                    {
+                        displayValue = displayValue.slice(0,-1);
+                        $('#result').val(displayValue);
+                    }
+                    else if(e.which == 17) // ctrl키
+                    {
+                        ctrldown = true;
+                    }
+                }
+
+            }).keyup(function(k) // ctrl 키를 땠을 때
+            {
+                if($("#plustab").is(':hidden'))
+                {
+                    if(k.which == 17)
+                    {
+                        ctrldown = false;
+                    }
+                }
+                k.stopImmediatePropagation();
+            })
+
+            $(document).keydown(function(e)
+            {
+                if($("#plustab").is(':hidden'))
+                {
+                    if(e.which == 67 && ctrldown == true) //c 키(복사)
+                    {
+                        if (window.getSelection)
+                            copied = window.getSelection();
+                        if (copied == '')
+                            copied = displayValue;
+                    }
+                    if(e.which == 86 && ctrldown == true) //v 키(붙여넣기)
+                    {
+                        displayValue += copied;
+                        $('#result').val(displayValue);
+                    }
+                    if(e.which == 88 && ctrldown == true) //x 키(잘라내기)
+                    {
+                        displayValue = '';
+                        $('#result').val('');
+                    }
+                }
                 e.stopImmediatePropagation();
             });
 
-            $(".paste").click(function(e) // paste 기능
-            {
-                displayValue += selectTxt.toString();
-                $('#result').text(displayValue);
-                e.stopImmediatePropagation();
-            });
 
             $("select").dblclick(function(e)
             {
                 displayValue = $("select option:selected").text();
-                $('#result').text(displayValue);
+                $('#result').val(displayValue);
                 e.stopImmediatePropagation();
             });
 
-            $(document).on("click",".procession",function(k) //토글 창 on,off , 생성된 html 팝업요소의 접근을 위한 on()사용
+            $(".procession").click(function(k) //토글 창 on,off , 생성된 html 팝업요소의 접근을 위한 on()사용
             {
-                // slice(-3,-1)은 마지막에서 세번째, 두번째 문자로 cross와 dot의 중복 클릭을 했을 때 입력을 막기 위함
-                if(($(this).val() == 'DO' || $(this).val() == 'CR' || $(this).val() == 'DE' || $(this).val() == 'IN' || $(this).val() == 'DF')
-                && (displayValue.slice(-3,-1) != "do" || displayValue.slice(-3,-1) != "os" || displayValue.slice(-3,-1) != "de" 
-                || displayValue.slice(-3,-1) != "in" || displayValue.slice(-3,-1) != "ul"))
-                {
-                    displayValue += $(this).text();
-                }
 
                 if($("#plustab").is(':visible'))
                 {
@@ -75,7 +119,7 @@
                 k.stopImmediatePropagation();
             })
 
-            $(document).on("click",".key",function(e) //키 입력, 행렬 탭이 닫혀 있을 때 동작
+            $(".key").click(function(e) //키 입력, 행렬 탭이 닫혀 있을 때 동작
             {
                 if($("#plustab").is(':visible')) // plustab이 보일 때
                 {
@@ -186,7 +230,7 @@
                                 displayValue += ")";
 
 
-                            $('#result').text(displayValue);
+                            $('#result').val(displayValue);
                             $('#plustab').hide();
                         }
                     }
@@ -194,7 +238,7 @@
 
                 else if($("#plustab").is(":hidden")) // plustab이 보이지 않을 때
                 {
-
+                    displayValue = $('#result').val().toString();
                     if($(this).val() == 'EV') // 계산하기 버튼 누를 때
                     {
                         try
@@ -206,16 +250,14 @@
                             {
                                 displayValue = tokens[0];
                             }
-                            $('#result').text(displayValue);
-
-                            displayValue = '';
+                            $('#result').val(displayValue);
                         }
                         catch (e)
                         {
                             displayValue = '';
                             if(displayValue != 'function')
                             {
-                                $('#result').text(e);
+                                $('#result').val(e);
                             }
                         }
 
@@ -224,18 +266,19 @@
                     {
                         if($(this).val() == 'CL') // 지우기 버튼을 누를 때
                         {
+                            $('#result').val('');
                             displayValue = '';
-                            $('#result').text(displayValue);
+                            $('#result').val(displayValue);
                         }
                         else if($(this).val() == 'RM') // 백스페이스 버튼을 누를 때
                         {
                             displayValue = remove(displayValue);
-                            $('#result').text(displayValue);
+                            $('#result').val(displayValue);
                         }
                         else if($(this).val() != "PR" && $(this).val() != "VE") // 벡터 와 행렬 한글을 출력하지 않게 함
                         {
                             displayValue += $(this).text();
-                            $('#result').text(displayValue);
+                            $('#result').val(displayValue);
                         }
 
                     }
@@ -243,12 +286,7 @@
                 }
                 e.stopImmediatePropagation();
             })
-        })
-        function drag()
-        {
-            if (window.getSelection)
-                selectTxt = window.getSelection();
-        }
+        });
         function remove(display)
         {
             let context = display.slice(-3,length.display);
@@ -279,55 +317,67 @@
 
 <body>
 <div class="container">
-    <div id="calculator" class="col-xs-6">
-        <div class="row">
-            <div class="col-xs-10 label">
-                <textarea id="result" class="form-control" onMouseUp="drag()" rows="2" readonly></textarea>
-            </div>
-            <div class="col-xs-2 RightLayout">
-                <button type="button" class="btn key btn-danger erase" value="CL">
-                    <span class="glyphicon glyphicon-erase" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-        <div class="row historyLine">
-            <div class="col-xs-10">
-                <select multiple class="form-control history">
-                </select>
-            </div>
-            <div class="col-xs-2 RightLayout">
-                <button type="button" class="btn btn-success erase" data-toggle="modal" data-target="#qna">
-                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                </button>
-            </div>
+    <div id="calculator">
+        <textarea id="result" class="form-control" rows="2" readonly></textarea>
+        <div class="historyLine">
+            <select multiple class="form-control history">
+            </select>
         </div>
         <div class="row">
-            <div class="col-xs-6">
-                <button type="button" class="btn key btn-default pc">AC</button>
-                <button type="button" class="btn key btn-default pc">/</button>
-                <button type="button" class="btn key btn-default pc">*</button>
+            <div>
+                <button type="button" class="btn key btn-danger erase" value="CL">AC</button>
+                <button type="button" class="btn key btn-warning pc">/</button>
+                <button type="button" class="btn key btn-warning pc">*</button>
+                <button type="button" class="btn key btn-danger rm" value="RM">
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                </button>
                 <button type="button" class="btn key btn-default pc">7</button>
                 <button type="button" class="btn key btn-default pc">8</button>
                 <button type="button" class="btn key btn-default pc">9</button>
+                <button type="button" class="btn key btn-warning pc">-</button>
                 <button type="button" class="btn key btn-default pc">4</button>
                 <button type="button" class="btn key btn-default pc">5</button>
                 <button type="button" class="btn key btn-default pc">6</button>
+                <button type="button" class="btn key btn-warning pc">+</button>
                 <button type="button" class="btn key btn-default pc">1</button>
                 <button type="button" class="btn key btn-default pc">2</button>
                 <button type="button" class="btn key btn-default pc">3</button>
-                <button type="button" class="btn key btn-default">0</button>
-            </div>
-            <div class="col-xs-4">
-                <button type="button" class="btn key btn-danger" value="RM">
-                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn key btn-default pc">-</button>
-                <button type="button" class="btn key btn-default pc">+</button>
                 <button type="button" class="btn key btn-success ev" value="EV">enter</button>
+                <button type="button" class="btn key btn-default pc zero">0</button>
+                <button type="button" class="btn key btn-info">.</button>
             </div>
         </div>
     </div>
-    <div id="plustab" class="col-xs-4">
+    <div class="cycle">
+        <div class="cidiv">
+            <ul>
+                <li><button class="inEvenbutton"><span class="key">inv</span></button></li>
+                <li><button class="inOddbutton"><span class="key">det</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span9">cross</span></button></li>
+                <li><button class="inOddbutton"><span class="key span10">dot</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span1">x</span></button></li>
+                <li><button class="inOddbutton"><span class="key span2">y</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span3">z</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span4">pi</span></button></li>
+                <li><button class="inOddbutton"><span class="key span5">e</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span6">i</span></button></li>
+                <li><button class="inOddbutton"><span class="key span7">f</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span8">g</span></button></li>
+            </ul>
+        </div>
+        <div class="innercidiv">
+            <ul>
+                <li><button class="inEvenbutton"><span class="key">sqrt</span></button></li>
+                <li><button class="inOddbutton"><span class="key">log</span></button></li>
+                <li><button class="inEvenbutton"><span class="key">exp</span></button></li>
+                <li><button class="inOddbutton proc"><span class="span2 procession">행렬</span></button></li>
+                <li><button class="inOddbutton"><span class="key span6">sin</span></button></li>
+                <li><button class="inEvenbutton"><span class="key span7">cos</span></button></li>
+                <li><button class="inOddbutton"><span class="key span8">tan</span></button></li>
+            </ul>
+        </div>
+    </div>
+    <div id="plustab">
         <div class="col-xs-12 RightLayout">
             <div class="addPmeter">
                 <button type="button" class="btn key btn-default modify" value="UP">
@@ -357,36 +407,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-</div>
-<div class="modal fade bs-example-modal-lg" id="qna" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">도움말</h4>
-            </div>
-            <div class="modal-body">
-                기본적으로 산술연산은 숫자와 파란색의 연산자, 그리고 EV라는 계산하기 버튼을 눌렀을 때, 진행됩니다.<br>
-                비교 연산은 하늘색의 비교 연산자를 누르면 됩니다. 상수는 PI(π)와 e, i가 있습니다.
-                <hr>
-                <h4>함수, 변수</h4>
-                함수와 변수를 정의할 때는 팝업을 띄우고 정의하고 싶은 함수를 클릭한 다음 '=' 연산자를 통해 정의합니다.<br>
-                함수는 인자로 기본적으로 주어진 x, y, z 변수를 통해서 f(x) = x + 1과 같이 인자를 사용해야 합니다.<br>
-                기본적으로 주어진 파란색 삼각함수와, 지수, 로그, 제곱근 등 하늘색의 제곱근 함수를 사용할 수 있습니다.<br>
-                <hr>
-                <h4>행렬</h4>
-                행렬을 간편하게 계산하기 위해 추가 탭을 준비했습니다. <br>
-                행렬이나 벡터 버튼안에 팝업으로 나타나는 버튼을 누르면 행렬탭이 나타납니다. <br>
-                숫자,함수 모두 입력할 수 있고, 지우기도 됩니다. 화살표를 눌러 원하는 크기의 행렬을 사용할 수 있습니다.<br>
-                입력을 누르면 행렬이 입력되고 각 함수에 따라서 괄호 쌍이 자동으로 입력됩니다.
-                <hr>
-                <h4>복사 붙여넣기, 히스토리, 지우기</h4>
-                복사는 드래그를 했을 경우에는 선택된 부분을, 아무것도 선택하지 않았을 때는 전체 수식을 복사합니다.<br>
-                히스토리는 계산했었던 히스토리를 보여주며, 더블클릭할 경우 수식을 다시 사용할 수 있습니다.<br>
-                지우기 기능은 여러 문자로된 함수를 지울때 그 함수를 모두 지울 수 있도록 했습니다.
-            </div>
-        </div>
     </div>
 </div>
 </body>

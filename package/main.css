@@ -2,16 +2,24 @@
 {
 	background-color: #f5f5f5;
     border: 13px solid #86bbdc;
-    height: auto;
-    padding: 14px;
+    padding: 10px 22px;
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    transform: translateX(-100%);
+    top: 40%;
+    width: 272px;
 }
 #plustab
 {
     background-color: #f5f5f5;
     border: 5px solid #86bbdc;
     min-height: 100px;
-    padding: 15px;
-    margin-top: 349px;
+    min-width: 300px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 10;
     padding: 2px;
     font-size: 10px;
     display: none;
@@ -27,7 +35,8 @@
 }
 #result
 {
-    font-size: 20px;
+    font-size: 15px;
+    margin-left: -9px;
 }
 #myTable
 {
@@ -51,14 +60,14 @@
 }
 .ev
 {
-    width: 75px;
-    height: 130px;
-    font-size: 27px;
+    width: 45px;
+    height: 90px;
+    font-size: 15px;
+    position: absolute;
 }
 .erase
 {
-    width: 65px;
-    height: 55px;
+    min-height: 1px;
 }
 .bracket
 {
@@ -69,6 +78,7 @@
 .RightLayout
 {
     padding: 0px;
+    float: left;
 }
 .compare
 {
@@ -86,7 +96,8 @@
 }
 .history
 {
-    height: 65px;
+    height: 42px;
+    margin-left: -9px;
 }
 .function
 {
@@ -172,4 +183,310 @@
     width: 60px;
     height: 27px;
     font-size: 18px;
+}
+.zero
+{
+    width: 104px;
+}
+.cidiv
+{
+    width: 100em;
+    height: 100em;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    top: 0%;
+    transform: translate(-49%, +1%);
+    border-radius: 50%;
+    overflow: hidden;
+}
+.cidiv li
+{
+    position: absolute;
+    font-size: 1.5em;
+    width: 40.1em;
+    height: 40em;
+    overflow: hidden;
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease;
+    color: #aaa;
+    left: 50%;
+    top: 50%;
+    margin-top: -40.5em;
+    margin-left: -40.5em;
+    overflow: hidden;
+}
+.cidiv li:first-child {
+    transform: rotate(0deg) skew(85deg);
+}
+
+.cidiv li:nth-child(2) {
+    transform: rotate(5deg) skew(85deg);
+}
+
+.cidiv li:nth-child(3) {
+    transform: rotate(170deg) skew(85deg)
+}
+
+.cidiv li:nth-child(4) {
+    transform: rotate(175deg) skew(85deg);
+}
+
+.cidiv li:nth-child(5) {
+    transform: rotate(55deg) skew(85deg);
+}
+
+.cidiv li:nth-child(6) {
+    transform: rotate(60deg) skew(85deg);
+}
+.cidiv li:nth-child(7) {
+    transform: rotate(65deg) skew(85deg);
+}
+.cidiv li:nth-child(8) {
+    transform: rotate(80deg) skew(85deg);
+}
+.cidiv li:nth-child(9) {
+    transform: rotate(85deg) skew(85deg);
+}
+.cidiv li:nth-child(10) {
+    transform: rotate(90deg) skew(85deg);
+}
+.cidiv li:nth-child(11) {
+    transform: rotate(105deg) skew(85deg);
+}
+.cidiv li:nth-child(12) {
+    transform: rotate(110deg) skew(85deg);
+}
+.cidiv li button
+{
+    display: block;
+    font-size: 1.2em;
+    height: 54em;
+    width: 54em;
+    position: absolute;
+    bottom: -27em;
+    right: -26em;
+    text-decoration: none;
+    color: white;
+    -webkit-transition: background-color .3s ease, -webkit-transform .8s ease;
+    transition: background-color .3s ease, -webkit-transform .8s ease;
+    transition: background-color .3s ease, transform .8s ease;
+    transform: skew(-85deg) rotate(-70deg) scale(1);
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 2em;
+    margin: 0.5px;
+}
+.cidiv li .inOddbutton
+{
+    background: radial-gradient(transparent 61%, #526dd8 30%);
+}
+.cidiv li .inEvenbutton
+{
+    background: radial-gradient(transparent 61%, #4660c9 30%);
+}
+.cidiv li button span
+{
+    position: absolute;
+    font-size: 1em;
+    width: 3em;
+    height: 5em;
+    bottom: 47.7em;
+    right: 34.5em;
+    transform: rotate(+70deg);
+}
+.cidiv li button .span1
+{
+    transform: rotate(15deg);
+    bottom: 46.7em;
+    right: 33.5em;
+}
+.cidiv li button .span2
+{
+    transform: rotate(10deg);
+    bottom: 46.7em;
+    right: 33.2em;
+}
+.cidiv li button .span3
+{
+    transform: rotate(5deg);
+    bottom: 46.5em;
+    right: 33em;
+}
+.cidiv li button .span4
+{
+    transform: rotate(-10deg);
+    bottom: 46.7em;
+    right: 32.6em;
+}
+.cidiv li button .span5
+{
+    transform: rotate(-10deg);
+    bottom: 46.6em;
+    right: 32.6em;
+}
+.cidiv li button .span6
+{
+    transform: rotate(-15deg);
+    bottom: 46.6em;
+    right: 32.5em;
+}
+.cidiv li button .span7
+{
+    transform: rotate(-35deg);
+    bottom: 46.9em;
+    right: 32em;
+}
+.cidiv li button .span8
+{
+    transform: rotate(-40deg);
+    bottom: 47.1em;
+    right: 32em;
+}
+.cidiv li button .span9
+{
+    transform: rotate(-100deg);
+    bottom: 48.7em;
+    right: 31.2em;
+}
+.cidiv li button .span10
+{
+    transform: rotate(-105deg);
+    bottom: 48.7em;
+    right: 31.2em;
+}
+.cidiv li button:hover
+{
+    background: radial-gradient(transparent 61%, #324591 30%);
+}
+
+.innercidiv
+{
+    width: 85em;
+    height: 85em;
+    position: fixed;
+    bottom: 0;
+    left: 50.5%;
+    top: 0%;
+    transform: translate(-50%, +10%);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px;
+}
+.innercidiv li
+{
+    position: absolute;
+    font-size: 1.5em;
+    width: 29em;
+    height: 29em;
+    overflow: hidden;
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease;
+    color: #aaa;
+    left: 50%;
+    top: 50%;
+    margin-top: -29.5em;
+    margin-left: -28.9em;
+    overflow: hidden;
+}
+.innercidiv li:first-child {
+    transform: rotate(0deg) skew(85deg);
+}
+
+.innercidiv li:nth-child(2) {
+    transform: rotate(5deg) skew(85deg);
+}
+
+.innercidiv li:nth-child(3) {
+    transform: rotate(10deg) skew(85deg);
+}
+
+.innercidiv li:nth-child(4) {
+    transform: rotate(85deg) skew(80deg);
+}
+
+.innercidiv li:nth-child(5) {
+    transform: rotate(165deg) skew(85deg);
+}
+
+.innercidiv li:nth-child(6) {
+    transform: rotate(170deg) skew(85deg);
+}
+
+.innercidiv li:nth-child(7) {
+    transform: rotate(175deg) skew(85deg);
+}
+.innercidiv li button {
+    display: block;
+    font-size: 1.2em;
+    height: 47em;
+    width: 47em;
+    position: absolute;
+    bottom: -23.5em;
+    right: -23.5em;
+    text-decoration: none;
+    color: white;
+    -webkit-transition: background-color .3s ease, -webkit-transform .8s ease;
+    transition: background-color .3s ease, -webkit-transform .8s ease;
+    transition: background-color .3s ease, transform .8s ease;
+    transform: skew(-85deg) rotate(-70deg) scale(1);
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 2em;
+    margin: 0.5px;
+}
+.innercidiv li .proc
+{
+    transform: skew(-80deg) rotate(-70deg) scale(1);
+    background: radial-gradient(transparent 61%, #3ecc79 30%);
+}
+.innercidiv li .inOddbutton
+{
+    background: radial-gradient(transparent 61%, #52be7f 30%);
+}
+.innercidiv li .inEvenbutton
+{
+    background: radial-gradient(transparent 61%, #4eb479 30%);
+}
+.innercidiv li button span 
+{
+    position: absolute;
+    font-size: 1em;
+    width: 3em;
+    height: 5em;
+    bottom: 41.1em;
+    right: 30.1em;
+    transform: rotate(+70deg);
+}
+.innercidiv li button .span2
+{
+    transform: rotate(-15deg);
+    bottom: 40em;
+    right: 27em;
+}
+.innercidiv li button .span6
+{
+    transform: rotate(-95deg);
+    bottom: 41.8em;
+    right: 26.8em;
+}
+.innercidiv li button .span7
+{
+    transform: rotate(-100deg);
+    bottom: 41.9em;
+    right: 26.8em;
+}
+.innercidiv li button .span8
+{
+    transform: rotate(-105deg);
+    bottom: 42.1em;
+    right: 26.7em;
+}
+.innercidiv li button:hover
+{
+    background: radial-gradient(transparent 61%, #429a67 30%);
 }
